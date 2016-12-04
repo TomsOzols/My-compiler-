@@ -32,36 +32,22 @@ express (AMTYPES.STORE x) = \configuration ->
     let newState = popFromStack configuration in
         applyToState (createVarOrChangeValue x (convertStackValueToFloat (fst (newState)))) (snd newState)
 express (AMTYPES.NOOP) = \configuration -> configuration
-express (AMTYPES.BRANCH c1 c2) = \configuration -> branch configuration c1 c2
-express (AMTYPES.LOOP b c) = \configuration -> createLoopCommands configuration b c
-express null = \configuration -> configuration
--- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
--- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- Branch common function
-branch configuration c1 c2 = 
+express (AMTYPES.BRANCH c1 c2) = \configuration -> 
     let newState = popFromStack configuration in
         if convertStackValueToBool (fst newState)
             then addToCode (snd newState) c1
             else addToCode (snd newState) c2
-
-createLoopCommands
-    :: ([AMTYPES.Command], [StackValue], [(String, Float)])
-    -> [AMTYPES.Command]
-    -> [AMTYPES.Command]
-    -> ([AMTYPES.Command], [StackValue], [(String, Float)])
-createLoopCommands configuration b c = addToCode configuration (b ++ [(AMTYPES.BRANCH (c ++ [(AMTYPES.LOOP b c)]) [AMTYPES.NOOP])])
+express (AMTYPES.LOOP b c) = \configuration -> addToCode configuration (b ++ [(AMTYPES.BRANCH (c ++ [(AMTYPES.LOOP b c)]) [AMTYPES.NOOP])])
+express null = \configuration -> configuration
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 -- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- addToCode ::
+addToCode :: ([AMTYPES.Command], [StackValue], [(String, Float)]) -> [AMTYPES.Command] -> ([AMTYPES.Command], [StackValue], [(String, Float)])
 addToCode configuration newCode = (newCode ++ (getCode configuration), getStack configuration, getState configuration)
 -- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 -- Functions that apply a function to 2 float/boolean values
--- compareNumberEquality = c where c = (\a1 a2 -> (convertStackValueToFloat a1) == (convertStackValueToFloat a2))
-
 floatFunction :: (Float -> Float -> t) -> StackValue -> StackValue -> t
 floatFunction function a1 a2 = function (convertStackValueToFloat a1) (convertStackValueToFloat a2)
 booleanFunction :: (Bool -> Bool -> Bool) -> StackValue -> StackValue -> Bool
