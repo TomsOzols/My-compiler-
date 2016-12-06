@@ -50,7 +50,7 @@ runProgram program = eval program []
 gcd_program = Seq cSeqSeq cSeq3 where   ax = Var "x"
                                         ay = Var "y"
                                         b1 = Not (Eq ax ay)
-                                        b2 = Le ax ay
+                                        b2 = Ge ax ay
                                         cSeqSeq = Seq cSeq1 cSeq2
                                         cSeq1 = Assign "x" (Acon 15)
                                         cSeq2 = Assign "y" (Acon 5)
