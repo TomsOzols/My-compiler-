@@ -1,8 +1,8 @@
 module AMTYPES where 
 
 data Command =  PUSH Float | ADD | MULT | SUB | DIV 
-                | TRUE | FALSE | EQ | LE | GE | AND | OR | NEG | NEQ | LESSER | GREATER
-                | FETCH String | STORE String | NOOP 
+                | TRUE | FALSE | EQ | LE | AND | OR | NEG
+                | FETCH String | STORE String | NOOP
                 | BRANCH [Command] [Command]
                 | LOOP [Command] [Command]
                 

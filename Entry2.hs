@@ -12,3 +12,4 @@ runNestedIfsInv = AM_Interpreter.runInterpreter (Compiler.runProgram (Compiler.n
 runGcd = AM_Interpreter.runInterpreter (Compiler.runProgram (Compiler.gcd_program))
 runWhileProg = AM_Interpreter.runInterpreter (Compiler.runProgram (Compiler.aWhileProg))
 runWhileFalse = AM_Interpreter.runInterpreter (Compiler.runProgram (Compiler.aWhileFalse))
+runComplexBools = AM_Interpreter.runInterpreter (Compiler.runProgram (Compiler.complexBooleans))

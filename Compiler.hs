@@ -21,13 +21,14 @@ aval (Divide a b) codeList = codeList ++ aval b codeList ++ aval a codeList ++ [
 data Bexp = Bcon Bool | Eq Aexp Aexp | Le Aexp Aexp | Ge Aexp Aexp |
             Not Bexp | And Bexp Bexp | Or Bexp Bexp | Neq Aexp Aexp | Less Aexp Aexp | More Aexp Aexp
 
+-- Could make the Not more generic.
 bval (Bcon x)    codeList = let value = if x == True then AMTYPES.TRUE else AMTYPES.FALSE in codeList ++ [value]
 bval (Eq a b)    codeList = codeList ++ aval b codeList ++ aval a codeList ++ [AMTYPES.EQ]
--- bval (Neq a b)   codeList = codeList ++ aval a codeList ++ aval b codeList ++ [AMTYPES.NEQ]
+bval (Neq a b)   codeList = (bval (Eq a b) codeList) ++ [AMTYPES.NEG]
 bval (Le a b)    codeList = codeList ++ aval b codeList ++ aval a codeList ++ [AMTYPES.LE]
--- bval (Ge a b)    codeList = codeList ++ aval a codeList ++ aval b codeList ++ [AMTYPES.GE]
--- bval (Less a b)  codeList = codeList ++ aval a codeList ++ aval b codeList ++ [AMTYPES.LESSER]
--- bval (More a b)  codeList = codeList ++ aval a codeList ++ aval b codeList ++ [AMTYPES.GREATER]
+bval (Ge a b)    codeList = (bval (Le a b) codeList) ++ [AMTYPES.NEG] ++ (bval (Eq a b) codeList) ++ [AMTYPES.OR]
+bval (Less a b)  codeList = (bval (Eq a b) codeList) ++ [AMTYPES.NEG] ++ (bval (Le a b) codeList) ++ [AMTYPES.OR]
+bval (More a b)  codeList = (bval (Le a b) codeList) ++ [AMTYPES.NEG]
 bval (Not b)     codeList = codeList ++ bval b codeList ++ [AMTYPES.NEG]
 bval (And b1 b2) codeList = codeList ++ bval b1 codeList ++ bval b2 codeList ++ [AMTYPES.AND]
 bval (Or b1 b2)  codeList = codeList ++ bval b1 codeList ++ bval b2 codeList ++ [AMTYPES.OR]
@@ -147,3 +148,12 @@ aWhileFalse = Seq c1 cSeq where ax = Var "x"
                                 c3 = While b1 cWhile
                                 b1 = (Bcon False)
                                 cWhile = Assign "x" (Plus ax (Acon 1))
+
+complexBooleans = Seq c1 c2 where ax = Var "x"
+                                  c1 = Assign "x" (Acon 1)
+                                  c2 = While b1 cIf
+                                  b1 = And (Bcon True) (Le ax (Acon 9))
+                                  cIf = If b2 c1_1 c1_2
+                                  c1_1 = Assign "x" (Plus ax (Acon 3))
+                                  c1_2 = Assign "x" (Plus ax (Acon 2))
+                                  b2 = Or (Eq (Divide ax (Acon 3)) (Acon 1)) (Eq (Times ax (Acon 2)) (Acon 12))

@@ -15,8 +15,7 @@ express (AMTYPES.DIV) = \configuration -> pop2push1 (floatFunction (/)) configur
 express (AMTYPES.TRUE) = \configuration -> pushToStack configuration (ABoolValue True)
 express (AMTYPES.FALSE) = \configuration -> pushToStack configuration (ABoolValue False)
 express (AMTYPES.EQ) = \configuration -> pop2push1 (floatFunction (==)) configuration ABoolValue
-express (AMTYPES.LE) = \configuration -> pop2push1 (floatFunction (>=)) configuration ABoolValue
--- express (AMTYPES.GE)
+express (AMTYPES.LE) = \configuration -> pop2push1 (floatFunction (<=)) configuration ABoolValue
 express (AMTYPES.AND) = \configuration -> pop2push1 (booleanFunction (&&)) configuration ABoolValue
 express (AMTYPES.OR) = \configuration -> pop2push1 (booleanFunction (||)) configuration ABoolValue
 express (AMTYPES.NEG) = \configuration ->
@@ -24,9 +23,6 @@ express (AMTYPES.NEG) = \configuration ->
         let truthValue = convertStackValueToBool (fst currentConfig) in
             let newTruthValue = if truthValue == True then False else True in
                 pushToStack (snd currentConfig) (ABoolValue newTruthValue)
--- express (AMTYPES.NEQ)
--- express (AMTYPES.LESSER)
--- express (AMTYPES.GREATER)
 express (AMTYPES.FETCH x) = \configuration -> pushToStack (configuration) (AFloatValue (fst (getStateVariable configuration x)))
 express (AMTYPES.STORE x) = \configuration ->
     let newState = popFromStack configuration in
@@ -38,7 +34,6 @@ express (AMTYPES.BRANCH c1 c2) = \configuration ->
             then addToCode (snd newState) c1
             else addToCode (snd newState) c2
 express (AMTYPES.LOOP b c) = \configuration -> addToCode configuration (b ++ [(AMTYPES.BRANCH (c ++ [(AMTYPES.LOOP b c)]) [AMTYPES.NOOP])])
-express null = \configuration -> configuration
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 -- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -90,7 +85,6 @@ applyIfVarName varName number = \current -> if fst current == varName
     then (fst current, number)
     else current
 
--- Probably unneeded. Could be a let currently.
 applyToState :: ([(String, Float)] -> [(String, Float)]) -> ([AMTYPES.Command], [StackValue], [(String, Float)]) -> ([AMTYPES.Command], [StackValue], [(String, Float)])
 applyToState function configuration = (getCode configuration, getStack configuration, function (getState configuration))
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

@@ -14,7 +14,8 @@ runIfs
 runNestedIfs
 runGcd
 runWhileProg
+runComplexIfs
 
-Or god forbids You can define Your own program.
+Basically anything You find inside of Entry2.hs can be run. If You want to adjust the programs or write Your own, You can visit Compiler.hs
 
 Entry1.hs is an incomplete AM command stringifier. Was used in the development/debugging of the compiler/interpreter.
