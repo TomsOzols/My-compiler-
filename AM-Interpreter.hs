@@ -58,7 +58,7 @@ convertStackValueToBool (ABoolValue b) = b
 -- configuration is a structure that stores the 3 configuration lists (code, stack, state)
 -- the types of the configuration triple: ([AMTYPES.Command], [StackValue], [(String, Float)])
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- Stack related functions
+-- Stack related functionsghghghjh
 -- Paramater asType is the corresponding StackValue constructor
 pop2push1 :: (StackValue -> StackValue -> t) -> ([Command], [StackValue], [(String, Float)]) -> (t -> StackValue) -> ([Command], [StackValue], [(String, Float)])
 pop2push1 function configuration asType =
